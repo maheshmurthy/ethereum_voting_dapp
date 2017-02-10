@@ -1,0 +1,7 @@
+tmp/**
+build/**
+node_modules/**
+contracts/**
+migrations/1_initial_migration.js
+migrations/2_deploy_contracts.js
+test/metacoin.js
