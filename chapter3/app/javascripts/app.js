@@ -45,6 +45,11 @@ window.voteForCandidate = function(candidate) {
   });
 }
 
+/* The user enters the total no. of tokens to buy. We calculate the total cost and send it in
+ * the request. We have to send the value in Wei. So, we use the toWei helper method to convert
+ * from Ether to Wei.
+ */
+
 window.buyTokens = function() {
   let tokensToBuy = $("#buy").val();
   let price = tokensToBuy * tokenPrice;
@@ -52,7 +57,9 @@ window.buyTokens = function() {
   Voting.deployed().then(function(contractInstance) {
     contractInstance.buy({value: web3.toWei(price, 'ether'), from: web3.eth.accounts[0]}).then(function(v) {
       $("#buy-msg").html("");
-      $("#contract-balance").html(web3.fromWei(web3.eth.getBalance(contractInstance.address).toString()) + " Ether");
+      web3.eth.getBalance(contractInstance.address, function(error, result) {
+        $("#contract-balance").html(web3.fromWei(result.toString()) + " Ether");
+      });
     })
   });
   populateTokenData();
@@ -73,10 +80,17 @@ window.lookupVoterInfo = function() {
   });
 }
 
+/* Instead of hardcoding the candidates hash, we now fetch the candidate list from
+ * the blockchain and populate the array. Once we fetch the candidates, we setup the
+ * table in the UI with all the candidates and the votes they have received.
+ */
 function populateCandidates() {
   Voting.deployed().then(function(contractInstance) {
     contractInstance.allCandidates.call().then(function(candidateArray) {
       for(let i=0; i < candidateArray.length; i++) {
+        /* We store the candidate names as bytes32 on the blockchain. We use the
+         * handy toUtf8 method to convert from bytes32 to string
+         */
         candidates[web3.toUtf8(candidateArray[i])] = "candidate-" + i;
       }
       setupCandidateRows();
@@ -104,6 +118,9 @@ function setupCandidateRows() {
   });
 }
 
+/* Fetch the total tokens, tokens available for sale and the price of
+ * each token and display in the UI
+ */
 function populateTokenData() {
   Voting.deployed().then(function(contractInstance) {
     contractInstance.totalTokens().then(function(v) {
@@ -116,7 +133,9 @@ function populateTokenData() {
       tokenPrice = parseFloat(web3.fromWei(v.toString()));
       $("#token-cost").html(tokenPrice + " Ether");
     });
-    $("#contract-balance").html(web3.fromWei(web3.eth.getBalance(contractInstance.address).toString()) + " Ether");
+    web3.eth.getBalance(contractInstance.address, function(error, result) {
+      $("#contract-balance").html(web3.fromWei(result.toString()) + " Ether");
+    });
   });
 }
 
