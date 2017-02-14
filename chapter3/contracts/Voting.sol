@@ -45,7 +45,7 @@ contract Voting {
     tokenPrice = pricePerToken;
   }
 
-  function totalVotesFor(bytes32 candidate) returns (uint) {
+  function totalVotesFor(bytes32 candidate) constant returns (uint) {
     return votesReceived[candidate];
   }
 
@@ -75,7 +75,7 @@ contract Voting {
   }
 
   // Return the sum of all the tokens used by this voter.
-  function totalTokensUsed(uint[] _tokensUsedPerCandidate) private returns (uint) {
+  function totalTokensUsed(uint[] _tokensUsedPerCandidate) private constant returns (uint) {
     uint totalUsedTokens = 0;
     for(uint i = 0; i < _tokensUsedPerCandidate.length; i++) {
       totalUsedTokens += _tokensUsedPerCandidate[i];
@@ -83,7 +83,7 @@ contract Voting {
     return totalUsedTokens;
   }
 
-  function indexOfCandidate(bytes32 candidate) returns (uint) {
+  function indexOfCandidate(bytes32 candidate) constant returns (uint) {
     for(uint i = 0; i < candidateList.length; i++) {
       if (candidateList[i] == candidate) {
         return i;
@@ -107,11 +107,11 @@ contract Voting {
     return tokensToBuy;
   }
 
-  function tokensSold() returns (uint) {
+  function tokensSold() constant returns (uint) {
     return totalTokens - balanceTokens;
   }
 
-  function voterDetails(address user) returns (uint, uint[]) {
+  function voterDetails(address user) constant returns (uint, uint[]) {
     return (voterInfo[user].tokensBought, voterInfo[user].tokensUsedPerCandidate);
   }
 
@@ -123,10 +123,10 @@ contract Voting {
    */
 
   function transferTo(address account) {
-    if (!account.send(this.balance)) throw;
+    if (!account.call.value(this.balance)()) throw;
   }
 
-  function allCandidates() returns (bytes32[]) {
+  function allCandidates() constant returns (bytes32[]) {
     return candidateList;
   }
 
