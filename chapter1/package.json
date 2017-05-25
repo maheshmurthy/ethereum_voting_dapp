@@ -1,0 +1,14 @@
+{
+  "name": "ethereum_voting_dapp",
+  "version": "1.0.0",
+  "description": "Tutorial series by Mahesh Murthy: https://github.com/maheshmurthy/ethereum_voting_dapp",
+  "main": "index.js",
+  "dependencies": {
+    "ethereumjs-testrpc": "^3.0.3",
+    "web3": "^0.18.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node_modules/.bin/testrpc"
+  }
+}

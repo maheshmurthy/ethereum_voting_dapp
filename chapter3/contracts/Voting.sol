@@ -52,7 +52,7 @@ contract Voting {
   /* Instead of just taking the candidate name as an argument, we now also
    require the no. of tokens this voter wants to vote for the candidate
    */
-  function voteForCandidate(bytes32 candidate, uint totalTokens) {
+  function voteForCandidate(bytes32 candidate, uint votesInTokens) {
     uint index = indexOfCandidate(candidate);
     if (index == uint(-1)) throw;
 
@@ -66,12 +66,12 @@ contract Voting {
 
     // Make sure this voter has enough tokens to cast the vote
     uint availableTokens = voterInfo[msg.sender].tokensBought - totalTokensUsed(voterInfo[msg.sender].tokensUsedPerCandidate);
-    if (availableTokens < totalTokens) throw;
+    if (availableTokens < votesInTokens) throw;
 
-    votesReceived[candidate] += totalTokens;
+    votesReceived[candidate] += votesInTokens;
 
     // Store how many tokens were used for this candidate
-    voterInfo[msg.sender].tokensUsedPerCandidate[index] += totalTokens;
+    voterInfo[msg.sender].tokensUsedPerCandidate[index] += votesInTokens;
   }
 
   // Return the sum of all the tokens used by this voter.

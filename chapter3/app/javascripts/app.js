@@ -71,6 +71,7 @@ window.lookupVoterInfo = function() {
     contractInstance.voterDetails.call(address).then(function(v) {
       $("#tokens-bought").html("Total Tokens bought: " + v[0].toString());
       let votesPerCandidate = v[1];
+      $("#votes-cast").empty();
       $("#votes-cast").append("Votes cast per candidate: <br>");
       let allCandidates = Object.keys(candidates);
       for(let i=0; i < allCandidates.length; i++) {
