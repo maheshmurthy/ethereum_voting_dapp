@@ -123,7 +123,7 @@ contract Voting {
    */
 
   function transferTo(address account) {
-    if (!account.call.value(this.balance)()) throw;
+    account.transfer(this.balance);
   }
 
   function allCandidates() constant returns (bytes32[]) {
