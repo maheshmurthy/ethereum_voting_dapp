@@ -1,4 +1,4 @@
-pragma solidity ^0.4.6; //We have to specify what version of compiler this code will use
+pragma solidity ^0.4.10; //We have to specify what version of compiler this code will use
 
 contract Voting {
   /* mapping is equivalent to an associate array or hash
