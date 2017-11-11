@@ -1,4 +1,4 @@
-pragma solidity ^0.4.10; //We have to specify what version of compiler this code will use
+pragma solidity ^0.4.18; //We have to specify what version of compiler this code will use
 
 contract Voting {
   /* mapping is equivalent to an associate array or hash
@@ -14,21 +14,21 @@ contract Voting {
   bytes32[] public candidateList;
 
   // Initialize all the contestants
-  function Voting(bytes32[] candidateNames) {
+  function Voting(bytes32[] candidateNames) public {
     candidateList = candidateNames;
   }
 
-  function totalVotesFor(bytes32 candidate) returns (uint8) {
-    if (validCandidate(candidate) == false) throw;
+  function totalVotesFor(bytes32 candidate) view public returns (uint8) {
+    require(validCandidate(candidate));
     return votesReceived[candidate];
   }
 
-  function voteForCandidate(bytes32 candidate) {
-    if (validCandidate(candidate) == false) throw;
+  function voteForCandidate(bytes32 candidate) public {
+    require(validCandidate(candidate));
     votesReceived[candidate] += 1;
   }
 
-  function validCandidate(bytes32 candidate) returns (bool) {
+  function validCandidate(bytes32 candidate) view public returns (bool) {
     for(uint i = 0; i < candidateList.length; i++) {
       if (candidateList[i] == candidate) {
         return true;

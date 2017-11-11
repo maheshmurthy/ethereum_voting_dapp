@@ -1,4 +1,4 @@
-pragma solidity ^0.4.10; //We have to specify what version of the compiler this code will use
+pragma solidity ^0.4.18; //We have to specify what version of the compiler this code will use
 
 contract Voting {
 
@@ -38,23 +38,23 @@ contract Voting {
   /* When the contract is deployed on the blockchain, we will initialize
    the total number of tokens for sale, cost per token and all the candidates
    */
-  function Voting(uint tokens, uint pricePerToken, bytes32[] candidateNames) {
+  function Voting(uint tokens, uint pricePerToken, bytes32[] candidateNames) public {
     candidateList = candidateNames;
     totalTokens = tokens;
     balanceTokens = tokens;
     tokenPrice = pricePerToken;
   }
 
-  function totalVotesFor(bytes32 candidate) constant returns (uint) {
+  function totalVotesFor(bytes32 candidate) view public returns (uint) {
     return votesReceived[candidate];
   }
 
   /* Instead of just taking the candidate name as an argument, we now also
    require the no. of tokens this voter wants to vote for the candidate
    */
-  function voteForCandidate(bytes32 candidate, uint votesInTokens) {
+  function voteForCandidate(bytes32 candidate, uint votesInTokens) public {
     uint index = indexOfCandidate(candidate);
-    if (index == uint(-1)) throw;
+    require(index != uint(-1));
 
     // msg.sender gives us the address of the account/voter who is trying
     // to call this function
@@ -66,7 +66,7 @@ contract Voting {
 
     // Make sure this voter has enough tokens to cast the vote
     uint availableTokens = voterInfo[msg.sender].tokensBought - totalTokensUsed(voterInfo[msg.sender].tokensUsedPerCandidate);
-    if (availableTokens < votesInTokens) throw;
+    require(availableTokens >= votesInTokens);
 
     votesReceived[candidate] += votesInTokens;
 
@@ -75,7 +75,7 @@ contract Voting {
   }
 
   // Return the sum of all the tokens used by this voter.
-  function totalTokensUsed(uint[] _tokensUsedPerCandidate) private constant returns (uint) {
+  function totalTokensUsed(uint[] _tokensUsedPerCandidate) private pure returns (uint) {
     uint totalUsedTokens = 0;
     for(uint i = 0; i < _tokensUsedPerCandidate.length; i++) {
       totalUsedTokens += _tokensUsedPerCandidate[i];
@@ -83,7 +83,7 @@ contract Voting {
     return totalUsedTokens;
   }
 
-  function indexOfCandidate(bytes32 candidate) constant returns (uint) {
+  function indexOfCandidate(bytes32 candidate) view public returns (uint) {
     for(uint i = 0; i < candidateList.length; i++) {
       if (candidateList[i] == candidate) {
         return i;
@@ -98,20 +98,20 @@ contract Voting {
    not get any easier than this!
    */
 
-  function buy() payable returns (uint) {
+  function buy() payable public returns (uint) {
     uint tokensToBuy = msg.value / tokenPrice;
-    if (tokensToBuy > balanceTokens) throw;
+    require(tokensToBuy <= balanceTokens);
     voterInfo[msg.sender].voterAddress = msg.sender;
     voterInfo[msg.sender].tokensBought += tokensToBuy;
     balanceTokens -= tokensToBuy;
     return tokensToBuy;
   }
 
-  function tokensSold() constant returns (uint) {
+  function tokensSold() view public returns (uint) {
     return totalTokens - balanceTokens;
   }
 
-  function voterDetails(address user) constant returns (uint, uint[]) {
+  function voterDetails(address user) view public returns (uint, uint[]) {
     return (voterInfo[user].tokensBought, voterInfo[user].tokensUsedPerCandidate);
   }
 
@@ -122,11 +122,11 @@ contract Voting {
    check to make sure only the owner of this contract can cash out.
    */
 
-  function transferTo(address account) {
+  function transferTo(address account) public {
     account.transfer(this.balance);
   }
 
-  function allCandidates() constant returns (bytes32[]) {
+  function allCandidates() view public returns (bytes32[]) {
     return candidateList;
   }
 
