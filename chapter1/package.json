@@ -5,7 +5,8 @@
   "main": "index.js",
   "dependencies": {
     "ethereumjs-testrpc": "^3.0.3",
-    "web3": "^0.18.2"
+    "web3": "^0.18.2",
+    "solc": "^0.4.18"
   },
   "devDependencies": {},
   "scripts": {
